@@ -1,5 +1,6 @@
 # Common messages
 common:
+  prefix: "&8[&cTNTTag&8] &7"
   no-permission: "&cNo permissions for run this command."
   no-by-console: "&cThis command cannot be executed in the console."
   no-by-player: "&cThis command cannot be executed by a player."
@@ -10,3 +11,11 @@ common:
   arg-must-be-boolean: "&cThe argument {arg} must be true or false."
   arg-must-be-number: "&c{arg} is not valid number."
   exception: "&cAn unknown error has ocurred, contact an administrator."
+
+game:
+  join: "&b{last_joined} &7joined to game (&a{current_players}/{max_players}&7)"
+  quit: "&c{last_joined} &7leave the game (&a{current_players}/{max_players}&7)"
+  enough-players: "Enough players to start. Starting the game in {time} seconds."
+  starting:
+    title: "&c{time}"
+    subtitle: "&7Starting the game"

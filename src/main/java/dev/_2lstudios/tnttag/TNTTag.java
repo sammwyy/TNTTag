@@ -4,8 +4,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import dev._2lstudios.tnttag.api.ComplexAPI;
-import dev._2lstudios.tnttag.api.events.ComplexEvent;
+import dev._2lstudios.tnttag.api.TNTTagAPI;
+import dev._2lstudios.tnttag.api.events.TNTTagEvent;
 import dev._2lstudios.tnttag.commands.CommandListener;
 import dev._2lstudios.tnttag.commands.impl.HelloCommand;
 import dev._2lstudios.tnttag.config.ConfigManager;
@@ -28,7 +28,7 @@ public class TNTTag extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(listener, this);
     }
 
-    public boolean callEvent(ComplexEvent event) {
+    public boolean callEvent(TNTTagEvent event) {
         this.getServer().getPluginManager().callEvent(event);
         return !event.isCancelled();
     }
@@ -36,7 +36,7 @@ public class TNTTag extends JavaPlugin {
     @Override
     public void onEnable() {
         // Initialize API
-        new ComplexAPI(this);
+        new TNTTagAPI(this);
 
         // Instantiate managers.
         this.configManager = new ConfigManager(this);
