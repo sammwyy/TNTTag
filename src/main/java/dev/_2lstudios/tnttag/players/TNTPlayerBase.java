@@ -67,7 +67,9 @@ public class TNTPlayerBase extends CommandExecutor {
     public void sendI18nActionbar(String i18nKey) {
         String message = this.formatMessage(this.getI18nMessage(i18nKey));
         Player player = this.getBukkitPlayer();
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+        if (!message.isEmpty()) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+        }
     }
 
     public void sendI18nTitle(String titleKey, String subititleKey, int fadeIn, int stay, int fadeOut) {

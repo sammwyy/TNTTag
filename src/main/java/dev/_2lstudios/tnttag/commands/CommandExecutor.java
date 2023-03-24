@@ -38,7 +38,9 @@ public class CommandExecutor {
     }
 
     public void sendMessage(String message) {
-        this.sender.sendMessage(this.formatMessage(message));
+        if (message != null && !message.isEmpty()) {
+            this.sender.sendMessage(this.formatMessage(message));
+        }
     }
 
     public void sendI18nMessage(String key) {
