@@ -93,13 +93,9 @@ public class TNTPlayer extends TNTPlayerBase {
         this.spectator = spectator;
 
         if (spectator) {
-            for (TNTPlayer player : this.arena.getPlayers()) {
-                player.getBukkitPlayer().hidePlayer(this.getPlugin(), this.getBukkitPlayer());
-            }
+            this.getPlugin().getInvisibilityManager().hide(this.getBukkitPlayer());
         } else {
-            for (TNTPlayer player : this.arena.getPlayers()) {
-                player.getBukkitPlayer().showPlayer(this.getPlugin(), this.getBukkitPlayer());
-            }
+            this.getPlugin().getInvisibilityManager().show(this.getBukkitPlayer());
         }
     }
 

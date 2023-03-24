@@ -2,9 +2,11 @@ package dev._2lstudios.tnttag.arenas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 
 import dev._2lstudios.tnttag.TNTTag;
 import dev._2lstudios.tnttag.players.TNTPlayer;
@@ -18,6 +20,7 @@ public class TNTArena {
     private TNTPlayer lastPlayerJoin;
     private TNTPlayer lastPlayerQuit;
     private List<TNTPlayer> players;
+    private List<TNTPlayer> spectators;
     private TNTArenaState state;
     private int time;
     private TNTPlayer winner;
@@ -28,6 +31,7 @@ public class TNTArena {
         this.settings = settings;
 
         this.players = new ArrayList<>();
+        this.spectators = new ArrayList<>();
         this.reset();
     }
 
@@ -45,33 +49,41 @@ public class TNTArena {
         this.lastPlayerJoin = null;
         this.lastPlayerQuit = null;
         this.players.clear();
+        this.spectators.clear();
         this.state = TNTArenaState.WAITING;
         this.time = 1;
         this.winner = null;
     }
 
+    public void broadcast(Consumer<? super TNTPlayer> consumer) {
+        this.players.forEach(consumer);
+        this.spectators.forEach(consumer);
+    }
+
     public void broadcastMessage(String i18nKey) {
-        for (TNTPlayer player : this.players) {
+        this.broadcast((player) -> {
             player.sendI18nMessage(i18nKey);
-        }
+        });
     }
 
     public void broadcastSound(Sound sound) {
-        for (TNTPlayer player : this.players) {
-            player.getBukkitPlayer().playSound(player.getBukkitPlayer().getLocation(), sound, 1, 1);
-        }
+        this.broadcast((player) -> {
+            Player bukkitPlayer = player.getBukkitPlayer();
+            bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound, 1, 1);
+        });
     }
 
     public void broadcastSound(Sound sound, Location location) {
-        for (TNTPlayer player : this.players) {
-            player.getBukkitPlayer().playSound(location, sound, 1, 1);
-        }
+        this.broadcast((player) -> {
+            Player bukkitPlayer = player.getBukkitPlayer();
+            bukkitPlayer.playSound(location, sound, 1, 1);
+        });
     }
 
     public void broadcastTitle(String titleKey, String subtitleKey, int fadeIn, int stay, int fadeOut) {
-        for (TNTPlayer player : this.players) {
+        this.broadcast((player) -> {
             player.sendI18nTitle(titleKey, subtitleKey, fadeIn, stay, fadeOut);
-        }
+        });
     }
 
     public String getID() {
@@ -90,20 +102,12 @@ public class TNTArena {
         return this.lastPlayerQuit;
     }
 
-    public List<TNTPlayer> getPlayers() {
+    public List<TNTPlayer> getAlivePlayers() {
         return this.players;
     }
 
-    public List<TNTPlayer> getAlivePlayers() {
-        List<TNTPlayer> players = new ArrayList<>(this.getPlayers());
-        players.removeIf((player) -> player.isSpectator());
-        return players;
-    }
-
     public List<TNTPlayer> getSpectators() {
-        List<TNTPlayer> players = new ArrayList<>(this.getPlayers());
-        players.removeIf((player) -> !player.isSpectator());
-        return players;
+        return this.spectators;
     }
 
     public TNTArenaSettings getSettings() {
@@ -159,12 +163,16 @@ public class TNTArena {
         player.setArena(this);
         player.setSpectator(true);
         player.getBukkitPlayer().teleport(this.settings.spectatorSpawn);
-        this.players.add(player);
+        this.spectators.add(player);
         return TNTArenaJoinResult.SUCCESS;
     }
 
     public void killPlayer(TNTPlayer player, boolean announce) {
         player.setSpectator(true);
+
+        this.players.remove(player);
+        this.spectators.add(player);
+
         if (announce) {
             this.broadcastMessage("game.death.message");
             this.broadcastSound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER, player.getBukkitPlayer().getLocation());
@@ -222,13 +230,13 @@ public class TNTArena {
     private void handleTick() {
         switch (this.state) {
             case WAITING:
-                if (this.getPlayers().size() >= this.settings.minPlayers) {
+                if (this.getAlivePlayers().size() >= this.settings.minPlayers) {
                     this.time = this.plugin.getConfig().getInt("settings.times.starting");
                     this.setState(TNTArenaState.STARTING);
                 }
                 break;
             case STARTING:
-                if (this.getPlayers().size() > this.settings.minPlayers) {
+                if (this.getAlivePlayers().size() > this.settings.minPlayers) {
                     this.time = 1;
                     this.setState(TNTArenaState.WAITING);
                 } else {

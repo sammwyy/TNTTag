@@ -21,6 +21,7 @@ import dev._2lstudios.tnttag.players.TNTPlayerManager;
 public class TNTTag extends JavaPlugin {
     private TNTArenaManager arenaManager;
     private ConfigManager configManager;
+    private InvisibilityManager invisibilityManager;
     private LanguageManager languageManager;
     private TNTPlayerManager playerManager;
 
@@ -45,6 +46,7 @@ public class TNTTag extends JavaPlugin {
         // Instantiate managers.
         this.arenaManager = new TNTArenaManager(this);
         this.configManager = new ConfigManager(this);
+        this.invisibilityManager = new InvisibilityManager(this);
         this.languageManager = new LanguageManager(this);
         this.playerManager = new TNTPlayerManager(this);
 
@@ -73,6 +75,10 @@ public class TNTTag extends JavaPlugin {
     // Managers getters
     public TNTArenaManager getArenaManager() {
         return this.arenaManager;
+    }
+
+    public InvisibilityManager getInvisibilityManager() {
+        return this.invisibilityManager;
     }
 
     public LanguageManager getLanguageManager() {
