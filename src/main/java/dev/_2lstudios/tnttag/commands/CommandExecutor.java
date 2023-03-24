@@ -1,7 +1,5 @@
 package dev._2lstudios.tnttag.commands;
 
-import com.iridium.iridiumcolorapi.IridiumColorAPI;
-
 import dev._2lstudios.tnttag.TNTTag;
 
 import org.bukkit.ChatColor;
@@ -18,9 +16,8 @@ public class CommandExecutor {
     }
 
     public String formatMessage(String message) {
-        return IridiumColorAPI.process(
-                ChatColor.translateAlternateColorCodes('&', message)
-                        .replace("{plugin_version}", this.plugin.getDescription().getVersion()));
+        return ChatColor.translateAlternateColorCodes('&', message)
+                .replace("{plugin_version}", this.plugin.getDescription().getVersion());
     }
 
     public String getLang() {
