@@ -62,6 +62,16 @@ public class TNTPlayerBase extends CommandExecutor {
         return this.bukkitPlayer != null && this.bukkitPlayer.isOnline();
     }
 
+    public void sendI18nTitle(String titleKey, String subititleKey, int fadeIn, int stay, int fadeOut) {
+        String title = this.getI18nMessage(titleKey);
+        String subtitle = this.getI18nMessage(subititleKey);
+        this.bukkitPlayer.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+    }
+
+    public void sendI18nTitle(String titleKey, String subititleKey) {
+        this.sendI18nTitle(titleKey, subititleKey, 10, 70, 20);
+    }
+
     public void sendRawMessage(String component, byte type) {
         if (ServerUtils.hasChatComponentAPI()) {
             this.bukkitPlayer.spigot().sendMessage(net.md_5.bungee.chat.ComponentSerializer.parse(component));

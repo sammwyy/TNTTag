@@ -11,6 +11,7 @@ import dev._2lstudios.tnttag.players.TNTPlayer;
 
 public class TNTArena {
     private TNTTag plugin;
+    private String id;
     private TNTArenaSettings settings;
 
     private TNTPlayer lastPlayerDeath;
@@ -21,9 +22,11 @@ public class TNTArena {
     private int time;
     private TNTPlayer winner;
 
-    public TNTArena(TNTTag plugin, TNTArenaSettings settings) {
+    public TNTArena(TNTTag plugin, String id, TNTArenaSettings settings) {
         this.plugin = plugin;
+        this.id = id;
         this.settings = settings;
+
         this.players = new ArrayList<>();
         this.reset();
     }
@@ -59,12 +62,20 @@ public class TNTArena {
         }
     }
 
+    public void broadcastSound(Sound sound, Location location) {
+        for (TNTPlayer player : this.players) {
+            player.getBukkitPlayer().playSound(location, sound, 1, 1);
+        }
+    }
+
     public void broadcastTitle(String titleKey, String subtitleKey, int fadeIn, int stay, int fadeOut) {
         for (TNTPlayer player : this.players) {
-            String title = player.getI18nMessage(titleKey);
-            String subtitle = player.getI18nMessage(subtitleKey);
-            player.getBukkitPlayer().sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+            player.sendI18nTitle(titleKey, subtitleKey, fadeIn, stay, fadeOut);
         }
+    }
+
+    public String getID() {
+        return this.id;
     }
 
     public TNTPlayer getLastPlayerDeath() {
@@ -115,12 +126,20 @@ public class TNTArena {
         return this.getAlivePlayers().size() >= this.settings.maxPlayers;
     }
 
+    public boolean isInGame() {
+        return this.state == TNTArenaState.IN_GAME || this.state == TNTArenaState.IN_GAME;
+    }
+
+    public boolean isAvailableToJoin() {
+        return !this.isFull() && !this.isInGame();
+    }
+
     public TNTArenaJoinResult join(TNTPlayer player) {
         if (player.getArena() != null) {
             return TNTArenaJoinResult.PLAYER_ALREADY_ARENA;
         } else if (this.isFull()) {
             return TNTArenaJoinResult.FULL;
-        } else if (this.state != TNTArenaState.WAITING && this.state != TNTArenaState.STARTING) {
+        } else if (this.isInGame()) {
             return TNTArenaJoinResult.ALREADY_STARTED;
         }
 
@@ -128,6 +147,7 @@ public class TNTArena {
         player.getBukkitPlayer().teleport(this.settings.spawn);
         this.players.add(player);
         this.lastPlayerJoin = player;
+        this.broadcastMessage("game.join");
         return TNTArenaJoinResult.SUCCESS;
     }
 
@@ -143,6 +163,18 @@ public class TNTArena {
         return TNTArenaJoinResult.SUCCESS;
     }
 
+    public void killPlayer(TNTPlayer player, boolean announce) {
+        player.setSpectator(true);
+        if (announce) {
+            this.broadcastMessage("game.death.message");
+            this.broadcastSound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER, player.getBukkitPlayer().getLocation());
+        }
+    }
+
+    public void killPlayer(TNTPlayer player) {
+        this.killPlayer(player, true);
+    }
+
     public TNTArenaQuitResult removePlayer(TNTPlayer player) {
         if (!this.equals(player.getArena())) {
             return TNTArenaQuitResult.PLAYER_NOT_IN_ARENA;
@@ -150,17 +182,25 @@ public class TNTArena {
 
         if (player.isSpectator()) {
             player.setSpectator(false);
+            player.setArena(null);
         } else {
             this.lastPlayerQuit = player;
+            player.setArena(null);
+            this.broadcastMessage("game.quit");
         }
 
-        player.setArena(null);
         this.players.remove(player);
         return TNTArenaQuitResult.SUCCESS;
     }
 
     private void setState(TNTArenaState state) {
         this.state = state;
+
+        if (state == TNTArenaState.WAITING) {
+            this.broadcastMessage("game.not-enough-players");
+        } else if (state == TNTArenaState.STARTING) {
+            this.broadcastMessage("game.enough-players");
+        }
     }
 
     private TNTArenaState getNextState() {
@@ -190,6 +230,10 @@ public class TNTArena {
                 if (this.getPlayers().size() > this.settings.minPlayers) {
                     this.time = 1;
                     this.setState(TNTArenaState.WAITING);
+                } else {
+                    if (this.time >= 10 && this.time < 0) {
+                        this.broadcastMessage("game.starting");
+                    }
                 }
                 break;
             case IN_GAME:

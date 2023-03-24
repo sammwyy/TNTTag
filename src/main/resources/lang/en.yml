@@ -12,10 +12,42 @@ common:
   arg-must-be-number: "&c{arg} is not valid number."
   exception: "&cAn unknown error has ocurred, contact an administrator."
 
+# Command messages
+help: |-
+  &7
+  &c&lTNTTag&r &8- &fCommand List
+  &e/tnttag join &8- &7Join to a random arena.
+  &e/tnttag join <arena> &8- &7Join to a specific game.
+  &e/tnttag leave &8- &7Leave current game.
+  &e/tnttag list &8- &7Get available games.
+  &e/tnttag help &8- &7See this help.
+  &e/tnttag spectate <arena> &8- &7Spectate a specific game.
+  &e/tnttag start &8- &7Force start your current arena.
+  &e/tnttag stats &8- &7Open stats menu.
+  &e/tnttag stats <player> &8- &7Open other player stats menu.
+
+join:
+  already-in-arena: "&cYou are already in game."
+  already-started: "&cThis arena is already started."
+  arena-is-full: "&cThis arena is full."
+  no-available-arena: "&cThere no available arena to join."
+  not-exist: "&cArena with this ID doesn't exist."
+  success: "&aYou joined to arena &e{arena_id}"
+
+leave:
+  not-in-arena: "&cYouy aren't in game."
+  success: "&aYou leave the arena."
+
+# In-game messages
 game:
-  join: "&b{last_joined} &7joined to game (&a{current_players}/{max_players}&7)"
-  quit: "&c{last_joined} &7leave the game (&a{current_players}/{max_players}&7)"
-  enough-players: "Enough players to start. Starting the game in {time} seconds."
+  join: "&b{arena_joined} &7joined to game (&a{arena_players}/{arena_max}&7)"
+  quit: "&c{arena_leave} &7leave the game (&a{arena_players}/{arena_max}&7)"
+  enough-players: "&aEnough players to start. Starting the game in {arena_time} seconds."
+  not-enough-players: "&cNot enough players to start. (&e{arena_players}/{arena_min}&c)"
+  death:
+    title: "&cYOU DIED"
+    subtitle: "&7Good luck next time"
+    message: "&c{arena_death} has died &7(&7{arena_players}/{arena_max}&7)"
   starting:
-    title: "&c{time}"
+    title: "&c{arena_time}"
     subtitle: "&7Starting the game"

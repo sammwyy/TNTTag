@@ -7,5 +7,9 @@ url: ${url}
 softdepend: ["PlaceholderAPI"]
 api-version: 1.13
 commands:
-  hello:
-    description: "Main test command"
+  tnttag:
+    aliases: ["tnt"]
+    description: "Main tnttag command"
+  tnttagadmin:
+    aliases: ["tntadmin", "tadmin", "tnta"]
+    description: "Admin tnttag command"
