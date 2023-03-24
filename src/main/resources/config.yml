@@ -9,6 +9,8 @@ sounds:
   game:
     waiting: ENTITY_CAT_HURT
     starting: UI_BUTTON_CLICK
+    started: ENTITY_EXPERIENCE_ORB_PICKUP
     countdown: BLOCK_NOTE_BLOCK_PLING
     death: ENTITY_GENERIC_EXPLODE
-    target: ENTITY_CAT_PURREOW
+    target: ENTITY_CAT_PURR
+    win: ENTITY_PLAYER_LEVELUP

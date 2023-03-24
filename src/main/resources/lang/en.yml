@@ -64,6 +64,7 @@ lobby:
 # In-game messages
 game:
   actionbar: "&7Finish in &c{arena_time}s"
+  actionbar-starting: "&7Starting in &a{arena_time}s"
   enough-players: "&aEnough players to start. Starting the game in {arena_time} seconds."
   join: "&b{arena_joined} &7joined to game (&a{arena_players}/{arena_max}&7)"
   leave: "&c{arena_leave} &7leave the game (&a{arena_players}/{arena_max}&7)"
@@ -76,6 +77,7 @@ game:
   starting:
     title: "&c{arena_time}"
     subtitle: "&7Starting the game"
+    message: "&7Game starts in &c{arena_time} &7seconds."
   started:
     title: "&dGOOD LUCK"
     subtitle: "&bTry to avoid the bomb "
@@ -83,3 +85,7 @@ game:
     title: "&cPOTATOE"
     subtitle: "&7Pass the &cbomb &7to another player"
     message: "&c{arena_target} &7has the hot potatoe now."
+  winner:
+    title: "&2&lWINNER"
+    subtitle: "&aYou won this game!"
+    message: "&d{arena_winner} &7won the game."

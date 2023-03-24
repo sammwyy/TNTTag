@@ -5,17 +5,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-import org.bukkit.Location;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 public class TNTArenaSettings {
     @Expose
-    public Location spawn;
+    public TNTArenaSettingsLocation spawn;
     @Expose
-    public Location spectatorSpawn;
+    public TNTArenaSettingsLocation spectatorSpawn;
     @Expose
     public int minPlayers;
     @Expose

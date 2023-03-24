@@ -156,7 +156,7 @@ public class TNTArena {
     }
 
     public boolean isInGame() {
-        return this.state == TNTArenaState.IN_GAME || this.state == TNTArenaState.IN_GAME;
+        return this.state == TNTArenaState.IN_GAME;
     }
 
     public boolean isAvailableToJoin() {
@@ -173,7 +173,7 @@ public class TNTArena {
         }
 
         player.setArena(this);
-        player.getBukkitPlayer().teleport(this.settings.spawn);
+        player.teleport(this.settings.spawn);
         this.players.add(player);
         this.lastPlayerJoin = player;
         this.broadcastMessage("game.join");
@@ -187,19 +187,21 @@ public class TNTArena {
 
         player.setArena(this);
         player.setSpectator(true);
-        player.getBukkitPlayer().teleport(this.settings.spectatorSpawn);
+        player.teleport(this.settings.spectatorSpawn);
         this.spectators.add(player);
         return TNTArenaJoinResult.SUCCESS;
     }
 
     public void killPlayer(TNTPlayer player, boolean announce) {
         player.setSpectator(true);
+        player.toggleTNTHead(false);
 
+        this.lastPlayerDeath = player;
         this.players.remove(player);
         this.spectators.add(player);
 
         if (announce) {
-            Sound sound = this.plugin.getConfig().getSound("sound.game.death");
+            Sound sound = this.plugin.getConfig().getSound("sounds.game.death");
             this.broadcastSound(sound, player.getBukkitPlayer().getLocation());
             this.broadcastMessage("game.death.message");
         }
@@ -217,6 +219,7 @@ public class TNTArena {
         if (player.isSpectator()) {
             player.setSpectator(false);
             player.setArena(null);
+            this.spectators.remove(player);
         } else {
             if (player == this.lastPlayerTarget) {
                 player.kill(true);
@@ -224,10 +227,10 @@ public class TNTArena {
 
             player.setArena(null);
             this.lastPlayerQuit = player;
+            this.players.remove(player);
             this.broadcastMessage("game.leave");
         }
 
-        this.players.remove(player);
         player.teleportToLobby();
         return TNTArenaQuitResult.SUCCESS;
     }
@@ -239,15 +242,15 @@ public class TNTArena {
         }
 
         this.lastPlayerTarget = player;
+        this.broadcastMessage("game.target.message");
         player.toggleTNTHead(true);
+        player.sendI18nTitle("game.target.title", "game.target.subtitle", 10, 10, 10);
         player.playSound(this.plugin.getConfig().getSound("sounds.game.target"));
     }
 
     public void setTargetPlayerRandom() {
         TNTPlayer player = RandomUtils.getRandomElement(this.players);
         this.setTargetPlayer(player);
-        this.broadcastMessage("game.target.message");
-        player.sendI18nTitle("game.target.title", "game.target.subtitle");
     }
 
     // Handling
@@ -264,7 +267,12 @@ public class TNTArena {
             this.broadcastSound("sounds.game.starting");
         } else if (state == TNTArenaState.IN_GAME) {
             this.time = -1;
+            this.broadcastSound("sounds.game.started");
             this.broadcastTitle("game.started.title", "game.started.subtitle");
+        } else if (state == TNTArenaState.FINISHING) {
+            this.broadcastMessage("game.winner.message");
+            this.broadcastSound("sounds.game.win");
+            this.winner.sendI18nTitle("game.winner.title", "game.winner.subtitle");
         }
     }
 
@@ -315,12 +323,15 @@ public class TNTArena {
                 }
                 break;
             case STARTING:
-                if (this.getAlivePlayers().size() > this.settings.minPlayers) {
+                this.broadcastActionbar("game.actionbar-starting");
+
+                if (this.getAlivePlayers().size() < this.settings.minPlayers) {
                     this.setState(TNTArenaState.WAITING);
                 } else {
                     if (this.time <= 10 && this.time > 0) {
                         this.broadcastSound("sounds.game.countdown");
-                        this.broadcastMessage("game.starting");
+                        this.broadcastTitle("game.starting.title", "game.starting.subtitle");
+                        this.broadcastMessage("game.starting.message");
                     }
                 }
                 break;
@@ -336,10 +347,10 @@ public class TNTArena {
         if (this.time == 0 && this.state != TNTArenaState.IN_GAME) {
             this.setState(this.getNextState());
         } else {
-            this.handleTick();
             if (this.state != TNTArenaState.WAITING) {
                 this.time--;
             }
+            this.handleTick();
         }
     }
 }

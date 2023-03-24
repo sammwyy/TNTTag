@@ -55,6 +55,11 @@ public class PlaceholderUtils {
             return arena == null ? NA : arena.getSettings().maxPlayers + "";
         }
 
+        else if (placeholder.equals("arena_winner")) {
+            TNTPlayer target = arena == null ? null : arena.getWinner();
+            return target == null ? NA : target.getName();
+        }
+
         return "<unknown=" + placeholder + ">";
     }
 

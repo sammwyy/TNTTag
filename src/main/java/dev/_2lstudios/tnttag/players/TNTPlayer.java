@@ -11,9 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import dev._2lstudios.tnttag.TNTTag;
 import dev._2lstudios.tnttag.arenas.TNTArena;
 import dev._2lstudios.tnttag.arenas.TNTArenaJoinResult;
+import dev._2lstudios.tnttag.arenas.TNTArenaSettingsLocation;
 import dev._2lstudios.tnttag.utils.PlaceholderUtils;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class TNTPlayer extends TNTPlayerBase {
     private TNTArena arena;
@@ -32,8 +31,7 @@ public class TNTPlayer extends TNTPlayerBase {
     @Override
     public String formatMessage(String message) {
         String output = super.formatMessage(message);
-        PlaceholderUtils.format(this, message);
-        return output;
+        return PlaceholderUtils.format(this, output);
     }
 
     public TNTArena getArena() {
@@ -90,12 +88,6 @@ public class TNTPlayer extends TNTPlayerBase {
         this.playSound(sound, this.getBukkitPlayer().getLocation());
     }
 
-    public void sendI18nActionbar(String i18nKey) {
-        String message = this.formatMessage(this.getI18nMessage(i18nKey));
-        Player player = this.getBukkitPlayer();
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
-    }
-
     public void setArena(TNTArena arena) {
         this.arena = arena;
     }
@@ -112,11 +104,19 @@ public class TNTPlayer extends TNTPlayerBase {
         }
     }
 
+    public void teleport(Location location) {
+        this.getBukkitPlayer().teleport(location);
+    }
+
+    public void teleport(TNTArenaSettingsLocation location) {
+        this.teleport(location.toLocation());
+    }
+
     public void teleportToLobby() {
         if (this.getBukkitPlayer().isOnline()) {
             Location lobby = this.getPlugin().getLobbyConfig().getLocation("spawn");
             if (lobby != null) {
-                this.getBukkitPlayer().teleport(lobby);
+                this.teleport(lobby);
             } else {
                 this.sendI18nMessage("lobby.misconfigured");
             }

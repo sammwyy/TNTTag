@@ -17,16 +17,17 @@ public class LanguageManager {
     private final String defaultLanguage;
     private final File directory;
 
-    public LanguageManager(final String defaultLanguage, final File directory) {
+    public LanguageManager(File jarFile, String defaultLanguage, File directory) {
         this.languages = new HashMap<>();
         this.defaultLanguage = defaultLanguage;
         this.directory = directory;
 
-        LanguageExtractor.extractAll(directory);
+        LanguageExtractor.extractAll(jarFile, directory);
     }
 
-    public LanguageManager(final TNTTag plugin) {
+    public LanguageManager(TNTTag plugin) {
         this(
+                plugin.getJarFile(),
                 plugin.getConfig().getString("settings.default-lang"),
                 new File(plugin.getDataFolder(), "lang"));
     }

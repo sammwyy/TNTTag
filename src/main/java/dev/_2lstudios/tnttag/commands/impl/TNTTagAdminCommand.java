@@ -6,7 +6,7 @@ import dev._2lstudios.tnttag.commands.CommandListener;
 import dev._2lstudios.tnttag.commands.impl.admin.CreateSubcommand;
 import dev._2lstudios.tnttag.commands.impl.admin.DeleteSubcommand;
 
-@Command(name = "tnttag")
+@Command(name = "tnttagadmin", permission = "tnttag.admin")
 public class TNTTagAdminCommand extends CommandListener {
   public TNTTagAdminCommand() {
     this.addSubcommand(new CreateSubcommand());

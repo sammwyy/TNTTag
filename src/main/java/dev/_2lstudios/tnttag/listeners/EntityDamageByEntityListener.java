@@ -29,13 +29,18 @@ public class EntityDamageByEntityListener implements Listener {
             return;
         } else if (player.getArena() != damager.getArena()) {
             return;
+        } else if (damager.isSpectator()) {
+            return;
         }
 
         TNTArena arena = player.getArena();
+
+        if (!arena.isInGame()) {
+            e.setCancelled(true);
+        }
+
         if (arena.getPlayerTarget() == damager) {
             arena.setTargetPlayer(player);
-        } else {
-            e.setCancelled(true);
         }
     }
 }

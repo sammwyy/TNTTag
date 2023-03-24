@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import dev._2lstudios.tnttag.TNTTag;
+import dev._2lstudios.tnttag.utils.FileUtils;
 
 public class TNTArenaManager {
     private TNTTag plugin;
@@ -104,7 +105,7 @@ public class TNTArenaManager {
     public void loadFromDirectory(File directory) throws IOException {
         for (File file : directory.listFiles()) {
             if (file.getName().endsWith(".json")) {
-                String id = file.getName().split(".")[0];
+                String id = FileUtils.getBaseName(file);
                 this.loadFromFile(id, file);
             }
         }
@@ -128,6 +129,12 @@ public class TNTArenaManager {
             this.loadFromDirectory(directory);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void tick() {
+        for (TNTArena arena : this.getArenas()) {
+            arena.tick();
         }
     }
 }

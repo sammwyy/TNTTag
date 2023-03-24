@@ -9,22 +9,17 @@ import java.util.jar.JarFile;
 import dev._2lstudios.tnttag.utils.FileUtils;
 
 public class LanguageExtractor {
-    private static File getJarFile() {
-        return new File(LanguageExtractor.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-    }
-
-    private static boolean shouldExtractEntry(final JarEntry entry) {
+    private static boolean shouldExtractEntry(JarEntry entry) {
         return entry.getName().startsWith("lang/") && entry.getName().endsWith(".yml");
     }
 
-    public static void extractAll(final File target) {
+    public static void extractAll(File jar, File target) {
         if (!target.exists()) {
             target.mkdirs();
         }
 
-        try {
-            JarFile jar = new JarFile(LanguageExtractor.getJarFile());
-            for (Enumeration<JarEntry> enums = jar.entries(); enums.hasMoreElements();) {
+        try (JarFile jarFile = new JarFile(jar)) {
+            for (Enumeration<JarEntry> enums = jarFile.entries(); enums.hasMoreElements();) {
                 final JarEntry entry = enums.nextElement();
                 if (shouldExtractEntry(entry)) {
                     FileUtils.extractFile(new File(target, new File(entry.getName()).getName()), entry.getName());

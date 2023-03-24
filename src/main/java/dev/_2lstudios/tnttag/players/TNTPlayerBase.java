@@ -13,6 +13,8 @@ import dev._2lstudios.tnttag.utils.PlayerUtils;
 import dev._2lstudios.tnttag.utils.ServerUtils;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class TNTPlayerBase extends CommandExecutor {
     private Player bukkitPlayer;
@@ -62,9 +64,15 @@ public class TNTPlayerBase extends CommandExecutor {
         return this.bukkitPlayer != null && this.bukkitPlayer.isOnline();
     }
 
+    public void sendI18nActionbar(String i18nKey) {
+        String message = this.formatMessage(this.getI18nMessage(i18nKey));
+        Player player = this.getBukkitPlayer();
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+    }
+
     public void sendI18nTitle(String titleKey, String subititleKey, int fadeIn, int stay, int fadeOut) {
-        String title = this.getI18nMessage(titleKey);
-        String subtitle = this.getI18nMessage(subititleKey);
+        String title = this.formatMessage(this.getI18nMessage(titleKey));
+        String subtitle = this.formatMessage(this.getI18nMessage(subititleKey));
         this.bukkitPlayer.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
     }
 
