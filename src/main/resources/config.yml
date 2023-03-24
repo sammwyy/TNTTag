@@ -4,3 +4,10 @@ settings:
     starting: 30
     round: 20
     finishing: 5
+
+sounds:
+  game:
+    waiting: ENTITY_CAT_HURT
+    starting: UI_BUTTON_CLICK
+    countdown: BLOCK_NOTE_BLOCK_PLING
+    death: ENTITY_GENERIC_EXPLODE

@@ -80,6 +80,10 @@ public class TNTArena {
         });
     }
 
+    public void broadcastSound(String soundKey) {
+        this.broadcastSound(this.plugin.getConfig().getSound(soundKey));
+    }
+
     public void broadcastTitle(String titleKey, String subtitleKey, int fadeIn, int stay, int fadeOut) {
         this.broadcast((player) -> {
             player.sendI18nTitle(titleKey, subtitleKey, fadeIn, stay, fadeOut);
@@ -174,8 +178,9 @@ public class TNTArena {
         this.spectators.add(player);
 
         if (announce) {
+            Sound sound = this.plugin.getConfig().getSound("sound.game.death");
+            this.broadcastSound(sound, player.getBukkitPlayer().getLocation());
             this.broadcastMessage("game.death.message");
-            this.broadcastSound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER, player.getBukkitPlayer().getLocation());
         }
     }
 
@@ -232,15 +237,18 @@ public class TNTArena {
             case WAITING:
                 if (this.getAlivePlayers().size() >= this.settings.minPlayers) {
                     this.time = this.plugin.getConfig().getInt("settings.times.starting");
+                    this.broadcastSound("sounds.game.starting");
                     this.setState(TNTArenaState.STARTING);
                 }
                 break;
             case STARTING:
                 if (this.getAlivePlayers().size() > this.settings.minPlayers) {
                     this.time = 1;
+                    this.broadcastSound("sounds.game.waiting");
                     this.setState(TNTArenaState.WAITING);
                 } else {
                     if (this.time >= 10 && this.time < 0) {
+                        this.broadcastSound("sounds.game.countdown");
                         this.broadcastMessage("game.starting");
                     }
                 }
