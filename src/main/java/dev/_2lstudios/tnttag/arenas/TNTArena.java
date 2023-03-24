@@ -218,8 +218,12 @@ public class TNTArena {
             player.setSpectator(false);
             player.setArena(null);
         } else {
-            this.lastPlayerQuit = player;
+            if (player == this.lastPlayerTarget) {
+                player.kill(true);
+            }
+
             player.setArena(null);
+            this.lastPlayerQuit = player;
             this.broadcastMessage("game.leave");
         }
 

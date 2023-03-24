@@ -5,7 +5,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import dev._2lstudios.tnttag.TNTTag;
-import dev._2lstudios.tnttag.arenas.TNTArena;
 import dev._2lstudios.tnttag.players.TNTPlayer;
 
 public class PlayerQuitListener implements Listener {
@@ -18,10 +17,6 @@ public class PlayerQuitListener implements Listener {
   @EventHandler
   public void onPlayerQuit(PlayerQuitEvent e) {
     TNTPlayer player = this.plugin.getPlayerManager().removePlayer(e.getPlayer());
-    TNTArena arena = player.getArena();
-
-    if (arena != null) {
-      arena.explodeBomb();
-    }
+    player.leave();
   }
 }

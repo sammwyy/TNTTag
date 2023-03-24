@@ -113,11 +113,13 @@ public class TNTPlayer extends TNTPlayerBase {
     }
 
     public void teleportToLobby() {
-        Location lobby = this.getPlugin().getLobbyConfig().getLocation("spawn");
-        if (lobby != null) {
-            this.getBukkitPlayer().teleport(lobby);
-        } else {
-            this.sendI18nMessage("lobby.misconfigured");
+        if (this.getBukkitPlayer().isOnline()) {
+            Location lobby = this.getPlugin().getLobbyConfig().getLocation("spawn");
+            if (lobby != null) {
+                this.getBukkitPlayer().teleport(lobby);
+            } else {
+                this.sendI18nMessage("lobby.misconfigured");
+            }
         }
     }
 
