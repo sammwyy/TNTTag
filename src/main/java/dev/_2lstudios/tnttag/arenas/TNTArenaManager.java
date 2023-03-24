@@ -1,5 +1,7 @@
 package dev._2lstudios.tnttag.arenas;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,14 +20,42 @@ public class TNTArenaManager {
         this.arenas = new HashMap<>();
     }
 
-    public TNTArena addArena(TNTArena arena) {
-        this.arenas.put(arena.getID(), arena);
-        return arena;
+    public boolean addArena(TNTArena arena) {
+        String id = arena.getID();
+        if (this.arenas.containsKey(id)) {
+            return false;
+        } else {
+            this.arenas.put(id, arena);
+            return true;
+        }
     }
 
-    public TNTArena addArena(String id, TNTArenaSettings settings) {
-        TNTArena arena = new TNTArena(this.plugin, id, settings);
-        return this.addArena(arena);
+    public boolean addArena(String id, TNTArenaSettings settings) {
+        if (this.arenas.containsKey(id)) {
+            return false;
+        } else {
+            TNTArena arena = new TNTArena(this.plugin, id, settings);
+            this.arenas.put(id, arena);
+            return true;
+        }
+    }
+
+    public boolean addArena(String id) {
+        return this.addArena(id, new TNTArenaSettings());
+    }
+
+    public boolean deleteArena(String arenaID) {
+        TNTArena arena = this.arenas.remove(arenaID);
+        if (arena != null) {
+            arena.getSettings().delete();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean deleteArena(TNTArena arena) {
+        return this.deleteArena(arena.getID());
     }
 
     public TNTArena getArena(String id) {
@@ -64,5 +94,40 @@ public class TNTArenaManager {
         }
 
         return candidate;
+    }
+
+    public void loadFromFile(String id, File file) throws IOException {
+        TNTArenaSettings settings = TNTArenaSettings.load(file);
+        this.addArena(id, settings);
+    }
+
+    public void loadFromDirectory(File directory) throws IOException {
+        for (File file : directory.listFiles()) {
+            if (file.getName().endsWith(".json")) {
+                String id = file.getName().split(".")[0];
+                this.loadFromFile(id, file);
+            }
+        }
+    }
+
+    public boolean removeArena(String arenaID) {
+        TNTArena removed = this.arenas.remove(arenaID);
+        return removed != null;
+    }
+
+    public boolean removeArena(TNTArena arena) {
+        return this.removeArena(arena.getID());
+    }
+
+    public void safeLoadFromDirectory(File directory) {
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        try {
+            this.loadFromDirectory(directory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

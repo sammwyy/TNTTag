@@ -190,6 +190,7 @@ public class TNTArena {
         }
 
         this.players.remove(player);
+        player.teleportToLobby();
         return TNTArenaQuitResult.SUCCESS;
     }
 

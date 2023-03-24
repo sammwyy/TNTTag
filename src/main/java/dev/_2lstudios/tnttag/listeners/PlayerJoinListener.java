@@ -18,5 +18,9 @@ public class PlayerJoinListener implements Listener {
   public void onPlayerJoin(PlayerJoinEvent e) {
     TNTPlayer player = this.plugin.getPlayerManager().addPlayer(e.getPlayer());
     player.download();
+
+    if (this.plugin.getLobbyConfig().getBoolean("teleport-on-join")) {
+      player.teleportToLobby();
+    }
   }
 }

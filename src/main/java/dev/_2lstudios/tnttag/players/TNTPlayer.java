@@ -1,5 +1,6 @@
 package dev._2lstudios.tnttag.players;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import dev._2lstudios.tnttag.TNTTag;
@@ -99,6 +100,15 @@ public class TNTPlayer extends TNTPlayerBase {
             for (TNTPlayer player : this.arena.getPlayers()) {
                 player.getBukkitPlayer().showPlayer(this.getPlugin(), this.getBukkitPlayer());
             }
+        }
+    }
+
+    public void teleportToLobby() {
+        Location lobby = this.getPlugin().getLobbyConfig().getLocation("spawn");
+        if (lobby != null) {
+            this.getBukkitPlayer().teleport(lobby);
+        } else {
+            this.sendI18nMessage("lobby.misconfigured");
         }
     }
 }

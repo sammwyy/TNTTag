@@ -11,7 +11,7 @@ import dev._2lstudios.tnttag.players.TNTPlayer;
 @Command(name = "join", arguments = { Argument.STRING })
 public class JoinSubcommand extends CommandListener {
     private void randomJoin(TNTPlayer player, TNTTag plugin) {
-        TNTArena arena = plugin.getArenaMAnager().cherryPicking();
+        TNTArena arena = plugin.getArenaManager().cherryPicking();
         if (arena == null) {
             player.sendI18nMessage("join.no-available-arena");
             return;
@@ -20,7 +20,7 @@ public class JoinSubcommand extends CommandListener {
     }
 
     private void selectiveJoin(TNTPlayer player, TNTTag plugin, String arenaId) {
-        TNTArena arena = plugin.getArenaMAnager().getArena(arenaId);
+        TNTArena arena = plugin.getArenaManager().getArena(arenaId);
         if (arena == null) {
             player.sendI18nMessage("join.not-exist");
         } else {

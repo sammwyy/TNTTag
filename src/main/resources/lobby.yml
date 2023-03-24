@@ -1,0 +1,7 @@
+spawn: null
+
+# Teleport player to lobby on join.
+teleport-on-join: true
+
+# Teleport player on void.
+teleport-on-void: true

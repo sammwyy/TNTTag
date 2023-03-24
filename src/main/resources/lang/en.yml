@@ -13,6 +13,25 @@ common:
   exception: "&cAn unknown error has ocurred, contact an administrator."
 
 # Command messages
+admin:
+  create:
+    usage: "&cUsage: /tntadmin create <arena_id>"
+    success: "&aSuccessfully created arena."
+    already-exist: "&cArena with this ID already exist."
+  help: |-
+    &7
+    &c&lTNTTag&r &8- &6Admin Commands
+    &e/tnta create <name> &8- &7Set lobby to your location.
+    &e/tnta delete <arena> &8- &7Delete an arena.
+    &e/tnta go <arena> &8- &7Teleport to an arena.
+    &e/tnta save <arena> &8- &7Save arena to config file.
+    &e/tnta setlobby &8- &7Set lobby to your location.
+    &e/tnta set <arena> min <min> &8- &7Set min players for arena.
+    &e/tnta set <arena> max <max> &8- &7Set max players for arena.
+    &e/tnta set <arena> spawn &8- &7Set arena spawn to your location.
+    &e/tnta set <arena> spec &8- &7Set arena spectator spawn to your location.
+    &7
+
 help: |-
   &7
   &c&lTNTTag&r &8- &fCommand List
@@ -39,6 +58,9 @@ leave:
   success: "&aYou leave the arena."
 
 # In-game messages
+lobby:
+  misconfigured: "&cCannot teleport to spawn: no lobby defined."
+
 game:
   join: "&b{arena_joined} &7joined to game (&a{arena_players}/{arena_max}&7)"
   quit: "&c{arena_leave} &7leave the game (&a{arena_players}/{arena_max}&7)"

@@ -20,15 +20,15 @@ public class TNTTagAPI {
     }
 
     // Arena API.
-    public static TNTArena addArena(TNTArena arena) {
-        return plugin.getArenaMAnager().addArena(arena);
+    public static boolean addArena(TNTArena arena) {
+        return plugin.getArenaManager().addArena(arena);
     }
 
-    public static TNTArena addArena(String id, TNTArenaSettings settings) {
-        return plugin.getArenaMAnager().addArena(id, settings);
+    public static boolean addArena(String id, TNTArenaSettings settings) {
+        return plugin.getArenaManager().addArena(id, settings);
     }
 
     public static TNTArena getArena(String id) {
-        return plugin.getArenaMAnager().getArena(id);
+        return plugin.getArenaManager().getArena(id);
     }
 }

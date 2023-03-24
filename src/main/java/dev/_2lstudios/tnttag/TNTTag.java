@@ -1,5 +1,7 @@
 package dev._2lstudios.tnttag;
 
+import java.io.File;
+
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -47,6 +49,7 @@ public class TNTTag extends JavaPlugin {
         this.playerManager = new TNTPlayerManager(this);
 
         // Load data.
+        this.arenaManager.safeLoadFromDirectory(this.getFile("arenas"));
         this.languageManager.loadLanguagesSafe();
         this.playerManager.addAll();
 
@@ -63,8 +66,12 @@ public class TNTTag extends JavaPlugin {
         return this.configManager.getConfig("config.yml");
     }
 
+    public Configuration getLobbyConfig() {
+        return this.configManager.getConfig("lobby.yml");
+    }
+
     // Managers getters
-    public TNTArenaManager getArenaMAnager() {
+    public TNTArenaManager getArenaManager() {
         return this.arenaManager;
     }
 
@@ -77,6 +84,10 @@ public class TNTTag extends JavaPlugin {
     }
 
     // Others getters
+    public File getFile(String child) {
+        return new File(this.getDataFolder(), child);
+    }
+
     public boolean hasPlugin(String pluginName) {
         Plugin plugin = this.getServer().getPluginManager().getPlugin(pluginName);
         return plugin != null && plugin.isEnabled();
