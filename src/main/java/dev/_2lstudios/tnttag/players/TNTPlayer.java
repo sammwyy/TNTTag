@@ -1,11 +1,19 @@
 package dev._2lstudios.tnttag.players;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import dev._2lstudios.tnttag.TNTTag;
 import dev._2lstudios.tnttag.arenas.TNTArena;
 import dev._2lstudios.tnttag.arenas.TNTArenaJoinResult;
+import dev._2lstudios.tnttag.utils.PlaceholderUtils;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class TNTPlayer extends TNTPlayerBase {
     private TNTArena arena;
@@ -24,18 +32,7 @@ public class TNTPlayer extends TNTPlayerBase {
     @Override
     public String formatMessage(String message) {
         String output = super.formatMessage(message);
-
-        if (this.arena != null) {
-            output = output.replace("{arena_id}", this.arena.getID())
-                    .replace("{arena_time}", this.arena.getTime() + "")
-                    .replace("{arena_joined}", this.arena.getLastPlayerJoined().getName())
-                    .replace("{arena_leave}", this.arena.getLastPlayerQuit().getName())
-                    .replace("{arena_death}", this.arena.getLastPlayerDeath().getName())
-                    .replace("{arena_players}", this.arena.getAlivePlayers().size() + "")
-                    .replace("{arena_min}", this.arena.getSettings().minPlayers + "")
-                    .replace("{arena_max}", this.arena.getSettings().maxPlayers + "");
-        }
-
+        PlaceholderUtils.format(this, message);
         return output;
     }
 
@@ -85,6 +82,20 @@ public class TNTPlayer extends TNTPlayerBase {
         }
     }
 
+    public void playSound(Sound sound, Location location) {
+        this.getBukkitPlayer().playSound(location, sound, SoundCategory.AMBIENT, 1, 1);
+    }
+
+    public void playSound(Sound sound) {
+        this.playSound(sound, this.getBukkitPlayer().getLocation());
+    }
+
+    public void sendI18nActionbar(String i18nKey) {
+        String message = this.formatMessage(this.getI18nMessage(i18nKey));
+        Player player = this.getBukkitPlayer();
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+    }
+
     public void setArena(TNTArena arena) {
         this.arena = arena;
     }
@@ -92,10 +103,12 @@ public class TNTPlayer extends TNTPlayerBase {
     public void setSpectator(boolean spectator) {
         this.spectator = spectator;
 
-        if (spectator) {
-            this.getPlugin().getInvisibilityManager().hide(this.getBukkitPlayer());
-        } else {
-            this.getPlugin().getInvisibilityManager().show(this.getBukkitPlayer());
+        if (this.getBukkitPlayer().isOnline()) {
+            if (spectator) {
+                this.getPlugin().getInvisibilityManager().hide(this.getBukkitPlayer());
+            } else {
+                this.getPlugin().getInvisibilityManager().show(this.getBukkitPlayer());
+            }
         }
     }
 
@@ -105,6 +118,18 @@ public class TNTPlayer extends TNTPlayerBase {
             this.getBukkitPlayer().teleport(lobby);
         } else {
             this.sendI18nMessage("lobby.misconfigured");
+        }
+    }
+
+    public void toggleTNTHead(boolean toggle) {
+        if (toggle) {
+            ItemStack item = new ItemStack(Material.TNT);
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(this.getI18nMessage("game.tnt-item"));
+            item.setItemMeta(meta);
+            this.getBukkitPlayer().getInventory().setHelmet(item);
+        } else {
+            this.getBukkitPlayer().getInventory().setHelmet(new ItemStack(Material.AIR));
         }
     }
 }

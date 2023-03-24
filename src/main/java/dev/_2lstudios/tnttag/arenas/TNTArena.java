@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import dev._2lstudios.tnttag.TNTTag;
 import dev._2lstudios.tnttag.players.TNTPlayer;
+import dev._2lstudios.tnttag.utils.RandomUtils;
 
 public class TNTArena {
     private TNTTag plugin;
@@ -18,6 +19,7 @@ public class TNTArena {
 
     private TNTPlayer lastPlayerDeath;
     private TNTPlayer lastPlayerJoin;
+    private TNTPlayer lastPlayerTarget;
     private TNTPlayer lastPlayerQuit;
     private List<TNTPlayer> players;
     private List<TNTPlayer> spectators;
@@ -36,14 +38,13 @@ public class TNTArena {
     }
 
     public void reset() {
-        Location lobby = this.plugin.getConfig().getLocation("lobby");
-        for (TNTPlayer player : this.players) {
-            player.getBukkitPlayer().teleport(lobby);
+        this.broadcast((player) -> {
+            player.teleportToLobby();
             if (player.isSpectator()) {
                 player.setSpectator(false);
             }
             player.setArena(null);
-        }
+        });
 
         this.lastPlayerDeath = null;
         this.lastPlayerJoin = null;
@@ -58,6 +59,12 @@ public class TNTArena {
     public void broadcast(Consumer<? super TNTPlayer> consumer) {
         this.players.forEach(consumer);
         this.spectators.forEach(consumer);
+    }
+
+    public void broadcastActionbar(String i18nKey) {
+        this.broadcast((player) -> {
+            player.sendI18nActionbar(i18nKey);
+        });
     }
 
     public void broadcastMessage(String i18nKey) {
@@ -90,6 +97,16 @@ public class TNTArena {
         });
     }
 
+    public void broadcastTitle(String titleKey, String subtitleKey) {
+        this.broadcast((player) -> {
+            player.sendI18nTitle(titleKey, subtitleKey);
+        });
+    }
+
+    public void explodeBomb() {
+        this.killPlayer(this.lastPlayerTarget, true);
+    }
+
     public String getID() {
         return this.id;
     }
@@ -104,6 +121,10 @@ public class TNTArena {
 
     public TNTPlayer getLastPlayerQuit() {
         return this.lastPlayerQuit;
+    }
+
+    public TNTPlayer getPlayerTarget() {
+        return this.lastPlayerTarget;
     }
 
     public List<TNTPlayer> getAlivePlayers() {
@@ -199,7 +220,7 @@ public class TNTArena {
         } else {
             this.lastPlayerQuit = player;
             player.setArena(null);
-            this.broadcastMessage("game.quit");
+            this.broadcastMessage("game.leave");
         }
 
         this.players.remove(player);
@@ -207,13 +228,39 @@ public class TNTArena {
         return TNTArenaQuitResult.SUCCESS;
     }
 
+    public void setTargetPlayer(TNTPlayer player) {
+        TNTPlayer last = this.lastPlayerTarget;
+        if (last != null && last.isOnline()) {
+            last.toggleTNTHead(false);
+        }
+
+        this.lastPlayerTarget = player;
+        player.toggleTNTHead(true);
+        player.playSound(this.plugin.getConfig().getSound("sounds.game.target"));
+    }
+
+    public void setTargetPlayerRandom() {
+        TNTPlayer player = RandomUtils.getRandomElement(this.players);
+        this.setTargetPlayer(player);
+        this.broadcastMessage("game.target.message");
+        player.sendI18nTitle("game.target.title", "game.target.subtitle");
+    }
+
+    // Handling
     private void setState(TNTArenaState state) {
         this.state = state;
 
         if (state == TNTArenaState.WAITING) {
+            this.time = 1;
             this.broadcastMessage("game.not-enough-players");
+            this.broadcastSound("sounds.game.waiting");
         } else if (state == TNTArenaState.STARTING) {
+            this.time = this.plugin.getConfig().getInt("settings.times.starting");
             this.broadcastMessage("game.enough-players");
+            this.broadcastSound("sounds.game.starting");
+        } else if (state == TNTArenaState.IN_GAME) {
+            this.time = -1;
+            this.broadcastTitle("game.started.title", "game.started.subtitle");
         }
     }
 
@@ -232,34 +279,49 @@ public class TNTArena {
         }
     }
 
+    private void handleGameTick() {
+        List<TNTPlayer> alives = this.getAlivePlayers();
+        TNTPlayer target = this.getPlayerTarget();
+
+        if (this.time >= 0) {
+            this.broadcastActionbar("game.actionbar");
+        }
+
+        if (this.time <= 10 && this.time > 0 && target != null) {
+            target.playSound(this.plugin.getConfig().getSound("sounds.game.countdown"));
+        } else if (this.time == 0) {
+            this.explodeBomb();
+        } else if (this.time == -5) {
+            this.time = this.plugin.getConfig().getInt("settings.times.round");
+            this.setTargetPlayerRandom();
+        }
+
+        if (alives.size() == 1) {
+            this.winner = alives.get(0);
+            this.time = this.plugin.getConfig().getInt("settings.times.finishing");
+            this.setState(TNTArenaState.FINISHING);
+        }
+    }
+
     private void handleTick() {
         switch (this.state) {
             case WAITING:
                 if (this.getAlivePlayers().size() >= this.settings.minPlayers) {
-                    this.time = this.plugin.getConfig().getInt("settings.times.starting");
-                    this.broadcastSound("sounds.game.starting");
                     this.setState(TNTArenaState.STARTING);
                 }
                 break;
             case STARTING:
                 if (this.getAlivePlayers().size() > this.settings.minPlayers) {
-                    this.time = 1;
-                    this.broadcastSound("sounds.game.waiting");
                     this.setState(TNTArenaState.WAITING);
                 } else {
-                    if (this.time >= 10 && this.time < 0) {
+                    if (this.time <= 10 && this.time > 0) {
                         this.broadcastSound("sounds.game.countdown");
                         this.broadcastMessage("game.starting");
                     }
                 }
                 break;
             case IN_GAME:
-                List<TNTPlayer> alives = this.getAlivePlayers();
-                if (alives.size() == 1) {
-                    this.winner = alives.get(0);
-                    this.time = this.plugin.getConfig().getInt("settings.times.finishing");
-                    this.setState(TNTArenaState.FINISHING);
-                }
+                this.handleGameTick();
                 break;
             case FINISHING:
                 break;
@@ -267,7 +329,7 @@ public class TNTArena {
     }
 
     public void tick() {
-        if (this.time == 0) {
+        if (this.time == 0 && this.state != TNTArenaState.IN_GAME) {
             this.setState(this.getNextState());
         } else {
             this.handleTick();

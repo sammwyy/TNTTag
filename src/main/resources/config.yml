@@ -11,3 +11,4 @@ sounds:
     starting: UI_BUTTON_CLICK
     countdown: BLOCK_NOTE_BLOCK_PLING
     death: ENTITY_GENERIC_EXPLODE
+    target: ENTITY_CAT_PURREOW

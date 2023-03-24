@@ -57,15 +57,18 @@ leave:
   not-in-arena: "&cYouy aren't in game."
   success: "&aYou leave the arena."
 
-# In-game messages
+# Lobby messages
 lobby:
   misconfigured: "&cCannot teleport to spawn: no lobby defined."
 
+# In-game messages
 game:
-  join: "&b{arena_joined} &7joined to game (&a{arena_players}/{arena_max}&7)"
-  quit: "&c{arena_leave} &7leave the game (&a{arena_players}/{arena_max}&7)"
+  actionbar: "&7Finish in &c{arena_time}s"
   enough-players: "&aEnough players to start. Starting the game in {arena_time} seconds."
+  join: "&b{arena_joined} &7joined to game (&a{arena_players}/{arena_max}&7)"
+  leave: "&c{arena_leave} &7leave the game (&a{arena_players}/{arena_max}&7)"
   not-enough-players: "&cNot enough players to start. (&e{arena_players}/{arena_min}&c)"
+  tnt-item: "&cBOMB (Pass to another player)"
   death:
     title: "&cYOU DIED"
     subtitle: "&7Good luck next time"
@@ -73,3 +76,10 @@ game:
   starting:
     title: "&c{arena_time}"
     subtitle: "&7Starting the game"
+  started:
+    title: "&dGOOD LUCK"
+    subtitle: "&bTry to avoid the bomb "
+  target:
+    title: "&cPOTATOE"
+    subtitle: "&7Pass the &cbomb &7to another player"
+    message: "&c{arena_target} &7has the hot potatoe now."

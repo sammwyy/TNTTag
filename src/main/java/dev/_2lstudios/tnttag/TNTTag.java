@@ -14,6 +14,7 @@ import dev._2lstudios.tnttag.commands.impl.TNTTagCommand;
 import dev._2lstudios.tnttag.config.ConfigManager;
 import dev._2lstudios.tnttag.config.Configuration;
 import dev._2lstudios.tnttag.i18n.LanguageManager;
+import dev._2lstudios.tnttag.listeners.EntityDamageByEntityListener;
 import dev._2lstudios.tnttag.listeners.PlayerJoinListener;
 import dev._2lstudios.tnttag.listeners.PlayerQuitListener;
 import dev._2lstudios.tnttag.players.TNTPlayerManager;
@@ -56,6 +57,7 @@ public class TNTTag extends JavaPlugin {
         this.playerManager.addAll();
 
         // Register listeners.
+        this.addListener(new EntityDamageByEntityListener(this));
         this.addListener(new PlayerJoinListener(this));
         this.addListener(new PlayerQuitListener(this));
 
