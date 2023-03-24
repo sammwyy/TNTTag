@@ -1,5 +1,7 @@
 package dev._2lstudios.tnttag.api;
 
+import java.util.Collection;
+
 import org.bukkit.entity.Player;
 
 import dev._2lstudios.tnttag.TNTTag;
@@ -19,6 +21,10 @@ public class TNTTagAPI {
         return plugin.getPlayerManager().getPlayer(player);
     }
 
+    public static Collection<TNTPlayer> getPlayers(Player player) {
+        return plugin.getPlayerManager().getPlayers();
+    }
+
     // Arena API.
     public static boolean addArena(TNTArena arena) {
         return plugin.getArenaManager().addArena(arena);
@@ -30,5 +36,9 @@ public class TNTTagAPI {
 
     public static TNTArena getArena(String id) {
         return plugin.getArenaManager().getArena(id);
+    }
+
+    public static Collection<TNTArena> getArenas() {
+        return plugin.getArenaManager().getArenas();
     }
 }
