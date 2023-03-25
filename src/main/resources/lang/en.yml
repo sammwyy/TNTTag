@@ -63,7 +63,7 @@ lobby:
 
 # In-game messages
 game:
-  actionbar: "&7Finish in &c{arena_time}s"
+  actionbar: "&7Bomb explodes in &c{arena_time}s"
   actionbar-starting: "&7Starting in &a{arena_time}s"
   enough-players: "&aEnough players to start. Starting the game in {arena_time} seconds."
   join: "&b{arena_joined} &7joined to game (&a{arena_players}/{arena_max}&7)"
