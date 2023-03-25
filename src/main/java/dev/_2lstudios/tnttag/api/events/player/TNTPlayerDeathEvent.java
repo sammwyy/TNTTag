@@ -2,14 +2,14 @@ package dev._2lstudios.tnttag.api.events.player;
 
 import org.bukkit.event.HandlerList;
 
-import dev._2lstudios.tnttag.api.events.TNTTagCancellableEvent;
+import dev._2lstudios.tnttag.api.events.TNTCancellableEvent;
 import dev._2lstudios.tnttag.players.TNTPlayer;
 
-public class TNTTagPlayerDeathEvent extends TNTTagCancellableEvent {
+public class TNTPlayerDeathEvent extends TNTCancellableEvent {
     // Event
     private TNTPlayer player;
 
-    public TNTTagPlayerDeathEvent(TNTPlayer player) {
+    public TNTPlayerDeathEvent(TNTPlayer player) {
         this.player = player;
     }
 

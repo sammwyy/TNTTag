@@ -9,7 +9,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import dev._2lstudios.tnttag.TNTTag;
-import dev._2lstudios.tnttag.api.events.player.TNTTagPlayerDeathEvent;
+import dev._2lstudios.tnttag.api.events.arena.TNTArenaFinishingEvent;
+import dev._2lstudios.tnttag.api.events.player.TNTPlayerDeathEvent;
 import dev._2lstudios.tnttag.players.TNTPlayer;
 import dev._2lstudios.tnttag.utils.RandomUtils;
 
@@ -196,7 +197,7 @@ public class TNTArena {
     public void killPlayer(TNTPlayer player, boolean announce) {
         player.toggleTNTHead(false);
 
-        TNTTagPlayerDeathEvent event = new TNTTagPlayerDeathEvent(player);
+        TNTPlayerDeathEvent event = new TNTPlayerDeathEvent(player);
         if (!event.isCancelled()) {
             player.setSpectator(true);
 
@@ -318,6 +319,9 @@ public class TNTArena {
             this.winner = alives.get(0);
             this.time = this.plugin.getConfig().getInt("settings.times.finishing");
             this.setState(TNTArenaState.FINISHING);
+
+            TNTArenaFinishingEvent event = new TNTArenaFinishingEvent(this);
+            this.plugin.callEvent(event);
         }
     }
 

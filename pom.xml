@@ -11,7 +11,7 @@
     <!-- Plugin Information -->
     <name>TNTTag</name>
     <description>TNTTag minigame plugin</description>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <url>https://github.com/2lstudios-mc/TNTTag</url>
 
     <properties>

@@ -2,7 +2,7 @@ package dev._2lstudios.tnttag.api.events;
 
 import org.bukkit.event.Cancellable;
 
-public abstract class TNTTagCancellableEvent extends TNTTagEvent implements Cancellable {
+public abstract class TNTCancellableEvent extends TNTEvent implements Cancellable {
     private boolean cancel;
 
     @Override
