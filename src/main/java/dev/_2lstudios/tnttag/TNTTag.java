@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import dev._2lstudios.tnttag.api.TNTTagAPI;
+import dev._2lstudios.tnttag.api.events.TNTTagCancellableEvent;
 import dev._2lstudios.tnttag.api.events.TNTTagEvent;
 import dev._2lstudios.tnttag.arenas.TNTArenaManager;
 import dev._2lstudios.tnttag.commands.CommandListener;
@@ -39,6 +40,11 @@ public class TNTTag extends JavaPlugin {
     }
 
     public boolean callEvent(TNTTagEvent event) {
+        this.getServer().getPluginManager().callEvent(event);
+        return true;
+    }
+
+    public boolean callEvent(TNTTagCancellableEvent event) {
         this.getServer().getPluginManager().callEvent(event);
         return !event.isCancelled();
     }

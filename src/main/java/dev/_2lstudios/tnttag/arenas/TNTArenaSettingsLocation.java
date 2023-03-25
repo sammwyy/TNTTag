@@ -33,4 +33,16 @@ public class TNTArenaSettingsLocation {
         }
         return this.location;
     }
+
+    public static TNTArenaSettingsLocation create(Location location) {
+        TNTArenaSettingsLocation loc = new TNTArenaSettingsLocation();
+        loc.x = location.getX();
+        loc.y = location.getY();
+        loc.z = location.getZ();
+        loc.pitch = location.getPitch();
+        loc.yaw = location.getYaw();
+        loc.world = location.getWorld().getName();
+        loc.location = location;
+        return loc;
+    }
 }
