@@ -21,7 +21,7 @@ public class TNTTagAPI {
         return plugin.getPlayerManager().getPlayer(player);
     }
 
-    public static Collection<TNTPlayer> getPlayers(Player player) {
+    public static Collection<TNTPlayer> getPlayers() {
         return plugin.getPlayerManager().getPlayers();
     }
 

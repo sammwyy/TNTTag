@@ -353,4 +353,10 @@ public class TNTArena {
             this.handleTick();
         }
     }
+
+    public void start() {
+        if (!this.isInGame()) {
+            this.setState(TNTArenaState.IN_GAME);
+        }
+    }
 }
